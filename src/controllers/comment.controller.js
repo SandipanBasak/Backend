@@ -12,7 +12,7 @@ const getVideoComments = asyncHandler(async(req,res)=>{
     if(!videoId)
         throw new ApiError(400,"Video does not exist")
 
-    const comment = Comment.aggregate(
+    const comment = await  Comment.aggregate(
         [
             {
                 $match: {
@@ -43,7 +43,7 @@ const addComment = asyncHandler(async (req,res)=>{
     if(!videos)
         throw new ApiError(404,"Video does not exist")
 
-    const comment = Comment.create({
+    const comment = await Comment.create({
         content,
         owner,
         videos
@@ -53,7 +53,7 @@ const addComment = asyncHandler(async (req,res)=>{
     .status(200)
     .json(new ApiResponse(
         200,
-        {content,owner,videos},
+        comment,
         "Comment created successfully",
     ))
 
@@ -67,7 +67,7 @@ const updateComment = asyncHandler(async(req,res)=>{
     if(!id)
         throw new ApiError(400,"Comment does not exist")
 
-    const comment = Comment.findByIdAndUpdate(id,
+    const comment = await Comment.findByIdAndUpdate(id,
         {
             content
         },
@@ -87,7 +87,7 @@ const deleteComment = asyncHandler(async(req,res)=>{
     if(!id)
         throw new ApiError(400,"Comment does not exist")
 
-    const deletedComment = Comment.findByIdAndDelete(id)
+    const deletedComment = await Comment.findByIdAndDelete(id)
 
     return res
     .status(200)
